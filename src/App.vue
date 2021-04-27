@@ -23,9 +23,27 @@
         :key="index"
     >{{breed.name}}</div>
   </div>
+  <div style="width: 100%" class="container container-lists">
+    <div class="item">
+      <List
+          v-bind:data="breeds"
+          v-bind:on-click-item="selectBreed"
+          v-bind:checked="(name) => selectedBreeds.find((item) => item.name === name)"
+          v-bind:color-checked="{backgroundColor: 'blue', color: 'white'}"
+      />
+    </div>
+    <div class="item">
+      <List
+          v-bind:data="selectedBreeds"
+          v-bind:on-click-item="unselectBreed"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
+import List from './List';
+
 const parser = (data) => Object.entries(data).map((item) => ({name: item[0], subBreeds: item[1]}));
 
 const random = (max) => Math.floor(Math.random() * max);
@@ -56,8 +74,12 @@ export default {
     return {
       text: '',
       breeds: [],
-      randomBreeds: []
+      randomBreeds: [],
+      selectedBreeds: []
     }
+  },
+  components: {
+    List
   },
   computed: {
     computedText() {
@@ -88,6 +110,12 @@ export default {
         this.randomBreeds[firstIndex] = this.randomBreeds[secondIndex];
         this.randomBreeds[secondIndex] = breed;
       }
+    },
+    selectBreed(name) {
+      return this.selectedBreeds = [...this.selectedBreeds, this.breeds.find((item) => item.name === name)];
+    },
+    unselectBreed(name) {
+      return this.selectedBreeds = this.selectedBreeds.filter((item) => item.name !== name);
     }
   },
   async mounted() {
@@ -111,6 +139,14 @@ export default {
 
 .container {
   padding: 10px;
+}
+
+.container-lists {
+  display: flex;
+}
+
+.item {
+  padding: 20px;
 }
 
 .input-text {
